@@ -1,12 +1,5 @@
 # &#x20;Service Desk & Customer Success   – Gestão de Projetos
 
-Estou realizando um projeto acadêmico da matéria **Gestão de Projetos** na **Universidade Santa Célia**.
-
-Meu grupo é responsável pelo **microserviço de Service Desk**.
-Existem outros 4 microserviços no sistema (serão adicionados manualmente).
-
----
-
 ## 🏢 Estrutura Organizacional do Projeto
 
 **ERP Modular Cloud-Native**
