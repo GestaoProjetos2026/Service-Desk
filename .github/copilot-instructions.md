@@ -75,10 +75,10 @@ Exemplo:
 ## 5. Regras no repositório
 
 - Commits devem ter escopo se aplicável: `feat(login):`, `fix(api):`, etc.
-- Mensagem em inglês ou português consistente conforme equipe
+- Mensagem em inglês (padrão obrigatório)
 - 72 caracteres por linha no título recomendados
 - Body do commit (quando necessário) com 1 linha em branco após título
 
 ---
 
-> Coloque este arquivo em `.github/COMMIT-GUIDELINES.md` e compartilhe com a equipe para padronização.
+
