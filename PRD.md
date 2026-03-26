@@ -1,0 +1,130 @@
+# Documento de Requisitos do Produto (PRD)
+
+Versão: 0.1
+
+Data: 26/03/2026
+
+Proprietário do Produto: Squad 4 - Yuri Santos 183775
+
+Resumo Executivo
+-----------------
+- Objetivo do projeto: entregar um microserviço de Service Desk focado na comunicação cliente ↔ SaaS.
+- Problema / oportunidade: falta de um backend de tickets leve e documentado para devs consumidores de API.
+- Visão de sucesso: API de tickets aceita e utilizada por times de desenvolvimento, com documentação clara em `/docs` (Swagger) e coleção Postman disponível.
+
+1. Visão Geral
+---------------
+- Contexto do negócio: empresa precisa de canal estruturado para atendimento operacional e correção de incidentes no produto SaaS.
+- Público-alvo e stakeholders principais: devs integradores, times de suporte técnico, PO do produto.
+
+2. Metas e Critérios de Sucesso
+--------------------------------
+- Meta 1 (SMART): disponibilizar MVP da API em 4 semanas com endpoints de criação, leitura, atualização e envio de mensagens.
+- Meta 2: documentação completa em FastAPI/Swagger e Postman até a mesma entrega.
+- KPIs: tempo de criação de ticket (menos de 10s), taxa de sucesso das requisições (>= 97%)
+
+3. Escopo
+---------
+- Incluído no MVP / Fase 1:
+	- Endpoints CRUD de tickets (criar, consultar, atualizar status, fechar).
+	- Endpoints de mensagem associada ao ticket (thread de conversa).
+	- Banco de dados com tabelas `tickets` e `ticket_messages`, relação 1:N entre ticket e mensagens.
+	- Documentação FastAPI/Swagger em `/docs` e coleção Postman.
+- Excluído desta fase:
+	- UI de atendimento (apenas API).
+	- Regras de SLA complexas e métricas de tempo de resposta automatizado.
+	- Integração com canais externos (email/chat) nesta etapa inicial.
+- Premissas:
+	- Infraestrutura de banco de dados já disponível.
+	- Autenticação e autorização tratadas por gateway/separa camada (não entra no escopo técnico detalhado aqui).
+
+4. Personas
+------------
+- Dev de integração: cria/consulta tickets via API e espera resposta rápida e contratos estáveis.
+- Atendente de suporte: consulta tickets e envia mensagens, com histórico completo.
+
+
+5. Jornadas / Fluxos de Usuário
+-------------------------------
+- Fluxo principal:
+	1. Usuário (dev ou cliente do SaaS) acessa o portal/API e abre solicitação (ticket).
+	2. O atendente do Service Desk recebe notificação de novo ticket e visualiza detalhes em lista de tickets abertos.
+	3. Atendente atribui prioridade e, se aplicável, categoria (crítico, alto, normal) ao ticket.
+	4. Atendente inicia conversa de atendimento no chat interno e envia a primeira resposta.
+	5. Usuário acompanha conversa pelo histórico de mensagens e responde sempre que necessário.
+	6. Atendente verifica continuamente novos tickets e atualiza status (em progresso, aguardando cliente, resolvido).
+	7. Quando a solução é confirmada, atendente fecha ticket com status "fechado" e registra observações finais.
+
+- Fluxos alternativos / exceções:
+	- Se ticket não existe ao consultar ou atualizar, retorna erro de não encontrado.
+	- Se status inválido for enviado, é retornado erro de validação.
+	- Se o ticket fica muito tempo sem resposta, pode ser reaberto ou escalado (workflow extra fora do MVP).
+
+6. Requisitos Funcionais
+-------------------------
+- RF-001 — CRUD de ticket
+	- Descrição: permitir criar, listar, obter e atualizar tickets.
+	- Critérios de aceitação: dado uma requisição válida, quando chamar POST/GET/PATCH, então retornará código 200/201 e recurso esperado.
+- RF-002 — Mensagens em ticket
+	- Descrição: criar e listar mensagens associadas a um ticket.
+	- Critérios de aceitação: dado um ticket existente, quando enviar mensagem, então ela será persistida em `ticket_messages` e vinculada a `ticket_id`.
+- RF-003 — Status do ticket
+	- Descrição: atualizar status (aberto, em progresso, resolvido, fechado).
+	- Critérios de aceitação: status válido aceita, valor inválido rejeitado com 400.
+- RF-004 — Documentação de API
+	- Descrição: fornecer Swagger `/docs` e coleção Postman exportável.
+	- Critérios de aceitação: todos endpoints descritos e testados manualmente.
+
+7. Requisitos Não Funcionais
+----------------------------
+- Performance: resposta de 1s para operações básicas em cenário típico.
+- Segurança: obrigatoriedade de token no header (aplicação de gateway).
+- Disponibilidade: target de 99.5% no ambiente de produção.
+- Escalabilidade: serviço stateless, com suporte a múltiplas instâncias.
+- Usabilidade: API clara, validações consistentes e mensagens de erro legíveis.
+
+8. Regras de Negócio
+---------------------
+- RBN-001: Ticket pode ser criado sem mensagens iniciais; mensagens são opcionais e feitas posteriormente pelo usuário/atendente.
+- RBN-002: Mensagens de ticket são obrigatoriamente 1:N (um ticket pode ter múltiplas mensagens, cada mensagem pertence a um único ticket).
+
+9. Critérios de Aceitação & Testes
+----------------------------------
+- Critérios mínimos do done:
+	- API funcionando com endpoints e DB básico.
+	- Documentação em `/docs` e Postman disponível.
+
+
+10. Dependências
+-----------------
+- Sistemas externos: banco de dados relacional (MySQL). 
+- Equipes: infra, Equipe Core Engine.
+- Recursos: acesso a ambiente de staging e dados de teste.
+
+11. Riscos e Mitigações
+------------------------
+- Risco 1: atraso na infraestrutura de banco — mitigação: usar ambiente de dev local e mock inicial.
+- Risco 2: gaps na documentação — mitigação: revisão com devs consumidores e ajustes rápidos em Swagger/Postman.
+
+12. Cronograma e Marcos
+-----------------------
+- Marco 1: definição de requisitos e arquitetura — semana 2.
+- Marco 2: implementação do MVP e testes — semanas 4-6.
+- Marco 3: entrega e validação — fim da sprint 7.
+
+13. Plano de Lançamento e Operação
+---------------------------------
+- Lançamento: deploy em staging, validação, então produção.
+- Métricas pós-lançamento: sucesso de requisição, histórico de alterações, número de tickets criados.
+
+14. Glossário
+------------
+- Ticket: solicitação registrada de atendimento.
+- Ticket message: entrada de conversa vinculada a um ticket.
+
+Apêndice
+--------
+- Documentos relacionados: README do projeto, arquitetura.
+- Anexos: modelo de entidade `tickets` e `ticket_messages`, roteiro de uso de Postman.
+
+
