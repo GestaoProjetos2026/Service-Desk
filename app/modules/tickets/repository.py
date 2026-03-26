@@ -23,12 +23,13 @@ class TicketRepository:
         return self._session.get(Ticket, ticket_id)
 
     def list_all(self, skip: int = 0, limit: int = 50) -> tuple[int, list[Ticket]]:
-        total = self._session.scalar(select(func.count()).select_from(Ticket))
+        total_result = self._session.exec(select(func.count(Ticket.id)))
+        total = total_result.one() if total_result is not None else 0
         result = self._session.exec(
             select(Ticket).order_by(Ticket.created_at.desc()).offset(skip).limit(limit)
         )
         tickets = result.all()
-        return total, list(tickets)
+        return int(total), list(tickets)
 
     def update(self, ticket: Ticket, data: TicketUpdate) -> Ticket:
         from datetime import datetime
