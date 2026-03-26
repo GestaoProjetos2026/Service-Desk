@@ -1,6 +1,9 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.config.config import settings
+from app.config.database import get_session
 
 print("[DEBUG] app.main loaded")
 print(f"[DEBUG] settings: app_name={settings.app_name}, app_debug={settings.app_debug}")
@@ -16,8 +19,12 @@ def create_app() -> FastAPI:
     )
 
     @app.get("/health", status_code=200, tags=["Health"])
-    def health():
-        return {"status": "ok"}
+    def health(session = Depends(get_session)):
+        try:
+            session.execute(text("SELECT 1"))
+            return {"status": "ok", "db": "connected"}
+        except SQLAlchemyError as exc:
+            raise HTTPException(status_code=503, detail=f"database unavailable: {exc}")
 
     return app
 
