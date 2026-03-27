@@ -8,8 +8,8 @@
    - `python -m venv .venv`
    - `.venv\Scripts\Activate.ps1`
 3. Instale dependências:
-   - `pip install -U pip`
-   - `pip install -r requirements.txt`
+   - `py -m pip install -U pip`
+   - `py -m pip install -r requirements.txt`
 
 ## 2) Configurar banco de dados
 
