@@ -13,14 +13,14 @@ Resumo Executivo
 - Visão de sucesso: API de tickets aceita e utilizada por times de desenvolvimento, com documentação clara em `/docs` (Swagger) e coleção Postman disponível.
 ---
 Desafios possíveis
-### Situação atual
+Situação atual
 
 * Chamados podem se perder ou ficar sem resposta
 * Falta de histórico confiável
 * Falta de clareza sobre responsabilidade
 * Cliente sem visibilidade do status
 ---
-### Solução proposta
+Solução proposta
 
 Organizar todas as interações em um sistema centralizado, trazendo transparência e controle.
 
