@@ -94,30 +94,99 @@ Resumo Executivo
 	- API funcionando com endpoints e DB básico.
 	- Documentação em `/docs` e Postman disponível.
 
+11. Arquitetura e Implementação
+-----------------
+11.1 Tecnologias Utilizadas
+-----------------
 
-10. Dependências
+* **Backend:** FastAPI
+* **Banco de Dados:** SQL
+* **ORM/Conexão:** SQLAlchemy
+* **Servidor:** Uvicorn (Leve, rápido e compatível com FastAPI)
+
+-----------------
+11.2 Implementação Inicial
+-----------------
+
+Foi implementado um servidor FastAPI com:
+* Configuração via ambiente.
+* Conexão com banco de dados.
+* Endpoint `/health` para verificação de status da aplicação e banco.
+
+11.3 Fluxo de Funcionamento
+-----------------
+1. **Cliente:** Envia requisição via API.
+2. **Controller:** Recebe a rota e valida os dados.
+3. **Service:** Aplica as regras de negócio.
+4. **Repository:** Persiste as informações no banco de dados.
+5. **Resposta:** Retorno do status ao cliente.
+
+11.4 Relação com Requisitos
+-----------------
+* **RF01:** `POST /tickets` (Abertura)
+* **RF02:** `PATCH /tickets/{id}` (Atualização)
+* **RF03:** `POST /tickets/{id}/close` (Fechamento)
+* **RF04:** Histórico completo na tabela `ticket_messages`
+
+---
+11.5 Modelo de Dados (Schema)
+-----------------
+
+11.5.1 Tabela: `tickets`
+-----------------
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| **id** | CHAR(36) | PK - Identificador único (UUID) |
+| **title** | VARCHAR(255) | Título do chamado |
+| **description** | TEXT | Descrição detalhada do problema |
+| **status** | ENUM | pending, in_process, done, canceled |
+| **priority** | ENUM | low, normal, high, urgent |
+| **user_id** | CHAR(36) | Usuário que criou o ticket |
+| **client_id** | CHAR(36) | Cliente associado ao ticket |
+| **assigned_to** | CHAR(36) | Responsável pelo atendimento |
+| **updated_by** | CHAR(36) | Quem realizou a última atualização |
+| **category** | VARCHAR(100) | Categoria do chamado |
+| **closed_at** | TIMESTAMP | Data de encerramento (NULL se aberto) |
+| **created_at** | TIMESTAMP | Data de criação (Default: CURRENT_TIMESTAMP) |
+| **updated_at** | TIMESTAMP | Última atualização (Auto-update) |
+
+11.5.2 Tabela: `ticket_messages`
+-----------------
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| **id** | CHAR(36) | PK - Identificador único (UUID) |
+| **ticket_id** | CHAR(36) | FK - Relacionado a `tickets(id)` (NOT NULL) |
+| **author_id** | CHAR(36) | Identificador do autor da mensagem |
+| **message** | TEXT | Conteúdo da interação |
+| **is_internal** | BOOLEAN | Indica se a mensagem é interna (privada) |
+| **created_at** | TIMESTAMP | Data de criação (Default: CURRENT_TIMESTAMP) |
+| **updated_at** | TIMESTAMP | Última atualização (Auto-update) |
+
+> **Relacionamento:** `ticket_id` referencia `tickets(id)` com regra **ON DELETE CASCADE**.
+
+11. Dependências
 -----------------
 - Sistemas externos: banco de dados relacional (MySQL). 
 - Equipes: infra, Equipe Core Engine.
 - Recursos: acesso a ambiente de staging e dados de teste.
 
-11. Riscos e Mitigações
+12. Riscos e Mitigações
 ------------------------
 - Risco 1: atraso na infraestrutura de banco — mitigação: usar ambiente de dev local e mock inicial.
 - Risco 2: gaps na documentação — mitigação: revisão com devs consumidores e ajustes rápidos em Swagger/Postman.
 
-12. Cronograma e Marcos
+13. Cronograma e Marcos
 -----------------------
 - Marco 1: definição de requisitos e arquitetura — semana 2.
 - Marco 2: implementação do MVP e testes — semanas 4-6.
 - Marco 3: entrega e validação — fim da sprint 7.
 
-13. Plano de Lançamento e Operação
+14. Plano de Lançamento e Operação
 ---------------------------------
 - Lançamento: deploy em staging, validação, então produção.
 - Métricas pós-lançamento: sucesso de requisição, histórico de alterações, número de tickets criados.
 
-14. Glossário
+15. Glossário
 ------------
 - Ticket: solicitação registrada de atendimento.
 - Ticket message: entrada de conversa vinculada a um ticket.
@@ -126,5 +195,4 @@ Apêndice
 --------
 - Documentos relacionados: README do projeto, arquitetura.
 - Anexos: modelo de entidade `tickets` e `ticket_messages`, roteiro de uso de Postman.
-
 
