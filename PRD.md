@@ -7,7 +7,7 @@ Centralizar a comunicação entre usuários e equipe de suporte dentro do ERP mo
 - Como usuário, quero abrir um ticket para resolver problemas.
 - Como agente de suporte, quero responder tickets.
 - Como gestor, quero acompanhar status e métricas.
-- 
+  
 ⚙️ Requisitos Funcionais
 - Criar tickets
 - Listar tickets
