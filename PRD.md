@@ -100,8 +100,20 @@ Organizar todas as interações em um sistema centralizado, trazendo transparên
 - RBN-001: Ticket pode ser criado sem mensagens iniciais; mensagens são opcionais e feitas posteriormente pelo usuário/atendente.
 - RBN-002: Mensagens de ticket são obrigatoriamente 1:N (um ticket pode ter múltiplas mensagens, cada mensagem pertence a um único ticket).
 
+9. Fluxo de Estados
+
+```
+PENDING → IN_PROCESS → DONE
+                    ↘
+                      CANCELED
+```
+- **PENDING:** Ticket aberto, aguardando atribuição
+- **IN_PROCESS:** Analista está trabalhando
+- **DONE:** Ticket resolvido e fechado (closed_at preenchido automaticamente)
+- **CANCELED:** Ticket cancelado sem resolução
+
 ----------------------------------
-9. Critérios de Aceitação & Testes
+10. Critérios de Aceitação & Testes
 - Critérios mínimos do done:
 	- API funcionando com endpoints e DB básico.
 	- Documentação em `/docs` e Postman disponível.
@@ -110,10 +122,10 @@ Organizar todas as interações em um sistema centralizado, trazendo transparên
 11. Arquitetura e Implementação
 11.1 Tecnologias Utilizadas
 
-* **Backend:** FastAPI
-* **Banco de Dados:** SQL
+* **Backend:** Python
+* **Banco de Dados:** MySQL
 * **ORM/Conexão:** SQLAlchemy
-* **Servidor:** Uvicorn (Leve, rápido e compatível com FastAPI)
+* **Servidor:** FastAPI (Leve, rápido e compatível com FastAPI)
 
 -----------------
 11.2 Implementação Inicial
@@ -172,29 +184,29 @@ Foi implementado um servidor FastAPI com:
 > **Relacionamento:** `ticket_id` referencia `tickets(id)` com regra **ON DELETE CASCADE**.
 
 -----------------
-11. Dependências
+12. Dependências
 - Sistemas externos: banco de dados relacional (MySQL). 
 - Equipes: infra, Equipe Core Engine.
 - Recursos: acesso a ambiente de staging e dados de teste.
 
 ------------------------
-12. Riscos e Mitigações
+13. Riscos e Mitigações
 - Risco 1: atraso na infraestrutura de banco — mitigação: usar ambiente de dev local e mock inicial.
 - Risco 2: gaps na documentação — mitigação: revisão com devs consumidores e ajustes rápidos em Swagger/Postman.
 
 -----------------------
-13. Cronograma e Marcos
+14. Cronograma e Marcos
 - Marco 1: definição de requisitos e arquitetura — semana 2.
 - Marco 2: implementação do MVP e testes — semanas 4-6.
 - Marco 3: entrega e validação — fim da sprint 7.
 
 ---------------------------------
-14. Plano de Lançamento e Operação
+15. Plano de Lançamento e Operação
 - Lançamento: deploy em staging, validação, então produção.
 - Métricas pós-lançamento: sucesso de requisição, histórico de alterações, número de tickets criados.
 
 ------------
-15. Glossário
+16. Glossário
 - Ticket: solicitação registrada de atendimento.
 - Ticket message: entrada de conversa vinculada a um ticket.
 
@@ -202,4 +214,9 @@ Foi implementado um servidor FastAPI com:
 Apêndice
 - Documentos relacionados: README do projeto, arquitetura.
 - Anexos: modelo de entidade `tickets` e `ticket_messages`, roteiro de uso de Postman.
+
+
+
+
+**Status:** Em Desenvolvimento
 
