@@ -12,19 +12,19 @@ Resumo Executivo
 - Problema / oportunidade: falta de um backend de tickets leve e documentado para devs consumidores de API.
 - Visão de sucesso: API de tickets aceita e utilizada por times de desenvolvimento, com documentação clara em `/docs` (Swagger) e coleção Postman disponível.
 
-1. Visão Geral
 ---------------
+1. Visão Geral
 - Contexto do negócio: empresa precisa de canal estruturado para atendimento operacional e correção de incidentes no produto SaaS.
 - Público-alvo e stakeholders principais: devs integradores, times de suporte técnico, PO do produto.
 
-2. Metas e Critérios de Sucesso
 --------------------------------
+2. Metas e Critérios de Sucesso
 - Meta 1 (SMART): disponibilizar MVP da API em 4 semanas com endpoints de criação, leitura, atualização e envio de mensagens.
 - Meta 2: documentação completa em FastAPI/Swagger e Postman até a mesma entrega.
 - KPIs: tempo de criação de ticket (menos de 10s), taxa de sucesso das requisições (>= 97%)
 
-3. Escopo
 ---------
+3. Escopo
 - Incluído no MVP / Fase 1:
 	- Endpoints CRUD de tickets (criar, consultar, atualizar status, fechar).
 	- Endpoints de mensagem associada ao ticket (thread de conversa).
@@ -38,14 +38,14 @@ Resumo Executivo
 	- Infraestrutura de banco de dados já disponível.
 	- Autenticação e autorização tratadas por gateway/separa camada (não entra no escopo técnico detalhado aqui).
 
-4. Personas
 ------------
+4. Personas
 - Dev de integração: cria/consulta tickets via API e espera resposta rápida e contratos estáveis.
 - Atendente de suporte: consulta tickets e envia mensagens, com histórico completo.
 
 
-5. Jornadas / Fluxos de Usuário
 -------------------------------
+5. Jornadas / Fluxos de Usuário
 - Fluxo principal:
 	1. Usuário (dev ou cliente do SaaS) acessa o portal/API e abre solicitação (ticket).
 	2. O atendente do Service Desk recebe notificação de novo ticket e visualiza detalhes em lista de tickets abertos.
@@ -60,8 +60,8 @@ Resumo Executivo
 	- Se status inválido for enviado, é retornado erro de validação.
 	- Se o ticket fica muito tempo sem resposta, pode ser reaberto ou escalado (workflow extra fora do MVP).
 
-6. Requisitos Funcionais
 -------------------------
+6. Requisitos Funcionais
 - RF-001 — CRUD de ticket
 	- Descrição: permitir criar, listar, obter e atualizar tickets.
 	- Critérios de aceitação: dado uma requisição válida, quando chamar POST/GET/PATCH, então retornará código 200/201 e recurso esperado.
@@ -75,29 +75,28 @@ Resumo Executivo
 	- Descrição: fornecer Swagger `/docs` e coleção Postman exportável.
 	- Critérios de aceitação: todos endpoints descritos e testados manualmente.
 
-7. Requisitos Não Funcionais
 ----------------------------
+7. Requisitos Não Funcionais
 - Performance: resposta de 1s para operações básicas em cenário típico.
 - Segurança: obrigatoriedade de token no header (aplicação de gateway).
 - Disponibilidade: target de 99.5% no ambiente de produção.
 - Escalabilidade: serviço stateless, com suporte a múltiplas instâncias.
 - Usabilidade: API clara, validações consistentes e mensagens de erro legíveis.
 
-8. Regras de Negócio
 ---------------------
+8. Regras de Negócio
 - RBN-001: Ticket pode ser criado sem mensagens iniciais; mensagens são opcionais e feitas posteriormente pelo usuário/atendente.
 - RBN-002: Mensagens de ticket são obrigatoriamente 1:N (um ticket pode ter múltiplas mensagens, cada mensagem pertence a um único ticket).
 
-9. Critérios de Aceitação & Testes
 ----------------------------------
+9. Critérios de Aceitação & Testes
 - Critérios mínimos do done:
 	- API funcionando com endpoints e DB básico.
 	- Documentação em `/docs` e Postman disponível.
 
+-----------------
 11. Arquitetura e Implementação
------------------
 11.1 Tecnologias Utilizadas
------------------
 
 * **Backend:** FastAPI
 * **Banco de Dados:** SQL
@@ -106,34 +105,31 @@ Resumo Executivo
 
 -----------------
 11.2 Implementação Inicial
------------------
 
 Foi implementado um servidor FastAPI com:
 * Configuração via ambiente.
 * Conexão com banco de dados.
 * Endpoint `/health` para verificação de status da aplicação e banco.
 
-11.3 Fluxo de Funcionamento
 -----------------
+11.3 Fluxo de Funcionamento
 1. **Cliente:** Envia requisição via API.
 2. **Controller:** Recebe a rota e valida os dados.
 3. **Service:** Aplica as regras de negócio.
 4. **Repository:** Persiste as informações no banco de dados.
 5. **Resposta:** Retorno do status ao cliente.
 
-11.4 Relação com Requisitos
 -----------------
+11.4 Relação com Requisitos
 * **RF01:** `POST /tickets` (Abertura)
 * **RF02:** `PATCH /tickets/{id}` (Atualização)
 * **RF03:** `POST /tickets/{id}/close` (Fechamento)
 * **RF04:** Histórico completo na tabela `ticket_messages`
 
----
-11.5 Modelo de Dados (Schema)
 -----------------
+11.5 Modelo de Dados (Schema)
 
 11.5.1 Tabela: `tickets`
------------------
 | Campo | Tipo | Descrição |
 | :--- | :--- | :--- |
 | **id** | CHAR(36) | PK - Identificador único (UUID) |
@@ -149,9 +145,8 @@ Foi implementado um servidor FastAPI com:
 | **closed_at** | TIMESTAMP | Data de encerramento (NULL se aberto) |
 | **created_at** | TIMESTAMP | Data de criação (Default: CURRENT_TIMESTAMP) |
 | **updated_at** | TIMESTAMP | Última atualização (Auto-update) |
-
+---
 11.5.2 Tabela: `ticket_messages`
------------------
 | Campo | Tipo | Descrição |
 | :--- | :--- | :--- |
 | **id** | CHAR(36) | PK - Identificador único (UUID) |
@@ -164,35 +159,35 @@ Foi implementado um servidor FastAPI com:
 
 > **Relacionamento:** `ticket_id` referencia `tickets(id)` com regra **ON DELETE CASCADE**.
 
-11. Dependências
 -----------------
+11. Dependências
 - Sistemas externos: banco de dados relacional (MySQL). 
 - Equipes: infra, Equipe Core Engine.
 - Recursos: acesso a ambiente de staging e dados de teste.
 
-12. Riscos e Mitigações
 ------------------------
+12. Riscos e Mitigações
 - Risco 1: atraso na infraestrutura de banco — mitigação: usar ambiente de dev local e mock inicial.
 - Risco 2: gaps na documentação — mitigação: revisão com devs consumidores e ajustes rápidos em Swagger/Postman.
 
-13. Cronograma e Marcos
 -----------------------
+13. Cronograma e Marcos
 - Marco 1: definição de requisitos e arquitetura — semana 2.
 - Marco 2: implementação do MVP e testes — semanas 4-6.
 - Marco 3: entrega e validação — fim da sprint 7.
 
-14. Plano de Lançamento e Operação
 ---------------------------------
+14. Plano de Lançamento e Operação
 - Lançamento: deploy em staging, validação, então produção.
 - Métricas pós-lançamento: sucesso de requisição, histórico de alterações, número de tickets criados.
 
-15. Glossário
 ------------
+15. Glossário
 - Ticket: solicitação registrada de atendimento.
 - Ticket message: entrada de conversa vinculada a um ticket.
 
-Apêndice
 --------
+Apêndice
 - Documentos relacionados: README do projeto, arquitetura.
 - Anexos: modelo de entidade `tickets` e `ticket_messages`, roteiro de uso de Postman.
 
