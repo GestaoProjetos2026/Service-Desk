@@ -251,13 +251,11 @@ Acesse documentação em: `http://localhost:8000/docs`
 
 ---
 
-## 10. Próximas Fases
+## 10. Fases
 
 | Versão | Escopo | Data Estimada |
 |--------|--------|---------------|
-| v1.0 | MVP com 5 endpoints | 31/05/2026 |
-| v1.1 | WebSockets, relatórios, cache | 30/07/2026 |
-| v2.0 | Knowledge Base, IA, mobile app | 30/09/2026 |
+| v1.0 | API com 5 endpoints | 31/05/2026 |
 
 ---
 
