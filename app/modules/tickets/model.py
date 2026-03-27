@@ -1,9 +1,20 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Optional
 from uuid import uuid4
 
-from sqlmodel import Field, SQLModel
+from sqlalchemy import BOOLEAN, CHAR, Enum as SqlEnum, ForeignKey, String, Text, TIMESTAMP
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.config.database import Base
+
+
+def utc_now() -> datetime:
+    return datetime.now(UTC).replace(tzinfo=None)
+
+
+def enum_values(enum_class: type[Enum]) -> list[str]:
+    return [member.value for member in enum_class]
 
 
 class TicketStatus(str, Enum):
@@ -20,38 +31,54 @@ class TicketPriority(str, Enum):
     urgent = "urgent"
 
 
-class Ticket(SQLModel, table=True):
+class Ticket(Base):
     __tablename__ = "tickets"
 
-    id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True, max_length=36)
-    title: str = Field(max_length=255)
-    description: str
-    status: TicketStatus = Field(default=TicketStatus.pending)
-    priority: TicketPriority = Field(default=TicketPriority.normal)
-    user_id: Optional[str] = Field(default=None, max_length=36, index=True)
-    client_id: Optional[str] = Field(default=None, max_length=36, index=True)
-    assigned_to: Optional[str] = Field(default=None, max_length=36, index=True)
-    updated_by: Optional[str] = Field(default=None, max_length=36, index=True)
-    category: Optional[str] = Field(default=None, max_length=100)
-    closed_at: Optional[datetime] = Field(default=None)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
-    updated_at: datetime = Field(
-        default_factory=datetime.utcnow,
+    id: Mapped[str] = mapped_column(CHAR(36), primary_key=True, default=lambda: str(uuid4()))
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[TicketStatus] = mapped_column(
+        SqlEnum(TicketStatus, name="ticketstatus", values_callable=enum_values),
+        default=TicketStatus.pending,
         nullable=False,
-        sa_column_kwargs={"onupdate": datetime.utcnow},
+    )
+    priority: Mapped[TicketPriority] = mapped_column(
+        SqlEnum(TicketPriority, name="ticketpriority", values_callable=enum_values),
+        default=TicketPriority.normal,
+        nullable=False,
+    )
+    user_id: Mapped[Optional[str]] = mapped_column(CHAR(36), nullable=True, index=True)
+    client_id: Mapped[Optional[str]] = mapped_column(CHAR(36), nullable=True, index=True)
+    assigned_to: Mapped[Optional[str]] = mapped_column(CHAR(36), nullable=True, index=True)
+    updated_by: Mapped[Optional[str]] = mapped_column(CHAR(36), nullable=True, index=True)
+    category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    closed_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, default=utc_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP,
+        default=utc_now,
+        onupdate=utc_now,
+        nullable=False,
     )
 
 
-class TicketMessage(SQLModel, table=True):
+class TicketMessage(Base):
     __tablename__ = "ticket_messages"
 
-    id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True, max_length=36)
-    ticket_id: str = Field(foreign_key="tickets.id", max_length=36, index=True)
-    author_id: Optional[str] = Field(default=None, max_length=36, index=True)
-    message: str
-    is_internal: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(
-        default_factory=datetime.utcnow,
-        sa_column_kwargs={"onupdate": datetime.utcnow},
+    id: Mapped[str] = mapped_column(CHAR(36), primary_key=True, default=lambda: str(uuid4()))
+    ticket_id: Mapped[str] = mapped_column(
+        CHAR(36),
+        ForeignKey("tickets.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    author_id: Mapped[Optional[str]] = mapped_column(CHAR(36), nullable=True, index=True)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    is_internal: Mapped[bool] = mapped_column(BOOLEAN, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, default=utc_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP,
+        default=utc_now,
+        onupdate=utc_now,
+        nullable=False,
     )

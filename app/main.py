@@ -6,6 +6,7 @@ from app.config.config import settings
 from app.config.database import get_session
 from app.modules.tickets.routes import router as tickets_router
 
+
 print("[DEBUG] app.main loaded")
 print(f"[DEBUG] settings: app_name={settings.app_name}, app_debug={settings.app_debug}")
 
@@ -27,7 +28,6 @@ def create_app() -> FastAPI:
         except SQLAlchemyError as exc:
             raise HTTPException(status_code=503, detail=f"database unavailable: {exc}")
 
-    # Register routers
     app.include_router(tickets_router)
 
     return app

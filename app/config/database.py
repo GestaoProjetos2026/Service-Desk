@@ -1,6 +1,13 @@
-from sqlmodel import create_engine, Session
+from collections.abc import Generator
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.config.config import settings
+
+
+class Base(DeclarativeBase):
+    pass
 
 engine = create_engine(
     settings.database_url,
@@ -9,8 +16,10 @@ engine = create_engine(
     pool_recycle=3600,
 )
 
+SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
-def get_session():
-    """FastAPI dependency: yields a database session per request using SQLModel.Session."""
-    with Session(engine) as session:
+
+def get_session() -> Generator[Session, None, None]:
+    """FastAPI dependency: yields a SQLAlchemy session per request."""
+    with SessionLocal() as session:
         yield session
