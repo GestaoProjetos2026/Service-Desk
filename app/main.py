@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.config.config import settings
 from app.config.database import get_session
+from app.modules.knowledge_base.routes import router as knowledge_base_router
 from app.modules.tickets.routes import router as tickets_router
 
 
@@ -28,6 +29,7 @@ def create_app() -> FastAPI:
         except SQLAlchemyError as exc:
             raise HTTPException(status_code=503, detail=f"database unavailable: {exc}")
 
+    app.include_router(knowledge_base_router)
     app.include_router(tickets_router)
 
     return app
