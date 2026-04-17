@@ -123,6 +123,7 @@ PENDING → IN_PROCESS → DONE
 11.1 Tecnologias Utilizadas
 
 * **Backend:** Python
+* **Frontent:** HTML e CSS
 * **Banco de Dados:** MySQL
 * **ORM/Conexão:** SQLAlchemy
 * **Servidor:** FastAPI (Leve, rápido e compatível com FastAPI)
@@ -182,6 +183,21 @@ Foi implementado um servidor FastAPI com:
 | **updated_at** | TIMESTAMP | Última atualização (Auto-update) |
 
 > **Relacionamento:** `ticket_id` referencia `tickets(id)` com regra **ON DELETE CASCADE**.
+
+-----------------
+11.6 Estruturação de Telas Principais
+
+11.6.1 Tela Inicial
+![Tela inicial do aplicativo proposto](./docs/images/dashboard_section.png)
+
+11.6.2 Tela de Tickets
+![Tela dos tickets do aplicativo proposto](./docs/images/tickets_section.png)
+
+11.6.3 Tela de Mensagens
+![Tela de mensagens do aplicativo proposto](./docs/images/messages_section.png)
+
+11.6.4 Tela de Configurações
+![Tela de configurações do aplicativo proposto](./docs/images/settings_section.png)
 
 -----------------
 12. Dependências
