@@ -188,15 +188,19 @@ Foi implementado um servidor FastAPI com:
 11.6 Estruturação de Telas Principais
 
 11.6.1 Tela Inicial
+
 ![Tela inicial do aplicativo proposto](./docs/images/dashboard_section.png)
 
 11.6.2 Tela de Tickets
+
 ![Tela dos tickets do aplicativo proposto](./docs/images/tickets_section.png)
 
 11.6.3 Tela de Mensagens
+
 ![Tela de mensagens do aplicativo proposto](./docs/images/messages_section.png)
 
 11.6.4 Tela de Configurações
+
 ![Tela de configurações do aplicativo proposto](./docs/images/settings_section.png)
 
 -----------------
