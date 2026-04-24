@@ -59,3 +59,137 @@
   - `python -m alembic downgrade -1`
 - Caso o terminal não reconheça o comando python:
   - `Troque por "py" somente`
+
+## 6) Rodando com Docker
+
+### Pré-requisitos
+
+- **Docker**: [instale aqui](https://www.docker.com/products/docker-desktop)
+- **Docker Compose**: geralmente vem com Docker Desktop
+
+### Configuração
+
+1. Copie `.env.example` para `.env` (se não existir):
+   - `copy .env.example .env` (PowerShell)
+   - `cp .env.example .env` (Linux/Mac)
+
+2. (Opcional) Customize as variáveis em `.env`:
+   - `DB_HOST=mysql` (nome do serviço Docker, não localhost)
+   - `DB_USER`, `DB_PASSWORD`, `MYSQL_ROOT_PASSWORD`, etc.
+
+### Executar com Docker Compose
+
+1. **Build das imagens** (primeira vez ou após mudança de dependências):
+   ```powershell
+   docker-compose build
+   ```
+
+2. **Iniciar todos os serviços** (MySQL → Migration → API):
+   ```powershell
+   docker-compose up
+   ```
+   - MySQL inicia primeiro e aguarda estar saudável
+   - Migration roda automaticamente (Alembic `upgrade head`)
+   - API inicia após migrations completarem
+
+3. **Verificar saúde da API**:
+   ```
+   http://localhost:8000/health
+   ```
+   - Esperado: `{"status":"ok","db":"connected"}`
+
+4. **Acessar documentação Swagger**:
+   ```
+   http://localhost:8000/docs
+   ```
+
+### Logs e Debugging
+
+- **Ver todos os logs em tempo real**:
+  ```powershell
+  docker-compose logs -f
+  ```
+
+- **Ver logs apenas da migração**:
+  ```powershell
+  docker-compose logs migration
+  ```
+
+- **Ver logs apenas da API**:
+  ```powershell
+  docker-compose logs api
+  ```
+
+- **Ver logs apenas do MySQL**:
+  ```powershell
+  docker-compose logs mysql
+  ```
+
+### Parar os containers
+
+```powershell
+# Parar (containers permanecem)
+docker-compose stop
+
+# Parar e remover containers
+docker-compose down
+
+# Parar, remover containers e volumes (remove dados do banco)
+docker-compose down -v
+```
+
+### Operações úteis
+
+- **Rodar uma migração específica**:
+  ```powershell
+  docker-compose run migration python -m alembic upgrade head
+  ```
+
+- **Gerar uma nova migração**:
+  ```powershell
+  docker-compose run migration python -m alembic revision --autogenerate -m "Sua descrição"
+  ```
+
+- **Executar comandos no container da API**:
+  ```powershell
+  docker-compose exec api bash
+  ```
+
+- **Executar comandos no MySQL**:
+  ```powershell
+  docker-compose exec mysql mysql -u service_user -p service_desk
+  ```
+
+### Arquitetura
+
+O `docker-compose.yml` define 3 serviços coordenados:
+
+1. **mysql** (porta 3306)
+   - Aguarda estar saudável antes do próximo serviço
+   - Dados persistidos em volume `mysql_data`
+
+2. **migration** (Alembic)
+   - Depende de: mysql (service_healthy)
+   - Roda `python -m alembic upgrade head`
+   - Encerra após conclusão
+
+3. **api** (porta 8000)
+   - Depende de: migration (service_completed_successfully)
+   - FastAPI com Uvicorn
+   - Restart automático se falhar
+
+### Troubleshooting
+
+- **"service_completed_successfully" error**: Certifique-se de que o container `migration` completou com sucesso. Verifique logs com `docker-compose logs migration`
+
+- **Porta 3306 já em uso**: Mude em `docker-compose.yml` a porta de `3306:3306` para `3307:3306`
+
+- **Conexão recusada no banco**: Aguarde alguns segundos, o healthcheck MySQL pode levar um tempo
+
+- **Remover tudo e começar do zero**:
+  ```powershell
+  docker-compose down -v
+  docker-compose build --no-cache
+  docker-compose up
+  ```
+
