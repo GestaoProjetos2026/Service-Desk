@@ -7,9 +7,15 @@ from sqlalchemy.orm import Session
 from app.modules.tickets.model import Ticket, TicketStatus, utc_now
 from app.modules.tickets.schema import TicketCreate, TicketUpdate
 
+from fastapi import HTTPException, status
 
 UUID_FIELDS = {"user_id", "client_id", "assigned_to", "updated_by", "ticket_id"}
-
+ALLOWED_TRANSITIONS = {
+    TicketStatus.pending: {TicketStatus.in_process},
+    TicketStatus.in_process: {TicketStatus.done, TicketStatus.canceled},
+    TicketStatus.done: set(),
+    TicketStatus.canceled: set(),
+}
 
 def serialize_identifiers(values: dict) -> dict:
     serialized = values.copy()
@@ -44,8 +50,18 @@ class TicketRepository:
     def update(self, ticket: Ticket, data: TicketUpdate) -> Ticket:
         update_data = serialize_identifiers(data.model_dump(exclude_unset=True))
 
-        # Auto-set closed_at when status transitions to done
-        if update_data.get("status") == TicketStatus.done and ticket.status != TicketStatus.done:
+        new_status = update_data.get("status")
+
+        if new_status and new_status != ticket.status:
+            
+            allowed = ALLOWED_TRANSITIONS.get(ticket.status, set())
+
+            if new_status not in allowed:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Transição inválida: {ticket.status} → {new_status}")
+            
+        if new_status == TicketStatus.done and ticket.status != TicketStatus.done:
             update_data["closed_at"] = utc_now()
 
         for field, value in update_data.items():
@@ -54,6 +70,7 @@ class TicketRepository:
         self._session.add(ticket)
         self._session.commit()
         self._session.refresh(ticket)
+
         return ticket
 
     def delete(self, ticket: Ticket) -> None:
