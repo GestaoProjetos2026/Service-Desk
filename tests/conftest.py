@@ -15,7 +15,8 @@ os.environ.setdefault("DB_PASSWORD", "test")
 from app.config.database import Base
 from app.config.database import get_session
 from app.main import create_app
-from app.modules.tickets.model import Ticket, TicketMessage
+from app.modules.tickets.model import Ticket
+from app.modules.ticket_messages.model import TicketMessage
 
 
 @pytest.fixture
