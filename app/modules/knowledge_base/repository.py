@@ -2,7 +2,8 @@ from typing import Optional
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.modules.tickets.model import Ticket, TicketMessage
+from app.modules.tickets.model import Ticket
+from app.modules.ticket_messages.model import TicketMessage
 
 
 class KnowledgeBaseRepository:

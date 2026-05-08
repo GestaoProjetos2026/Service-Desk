@@ -31,13 +31,6 @@ class TicketUpdate(BaseModel):
     category: Optional[str] = Field(default=None, max_length=100)
 
 
-class TicketMessageCreate(BaseModel):
-    ticket_id: UUID
-    author_id: Optional[UUID] = None
-    message: str = Field(min_length=1)
-    is_internal: bool = False
-
-
 # ── Response Schemas ───────────────────────────────────────────────────────────
 
 class TicketResponse(BaseModel):
@@ -54,18 +47,6 @@ class TicketResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     closed_at: Optional[datetime]
-
-    model_config = {"from_attributes": True}
-
-
-class TicketMessageResponse(BaseModel):
-    id: UUID
-    ticket_id: UUID
-    author_id: Optional[UUID]
-    message: str
-    is_internal: bool
-    created_at: datetime
-    updated_at: datetime
 
     model_config = {"from_attributes": True}
 
