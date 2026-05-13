@@ -57,18 +57,6 @@ class TicketResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class TicketMessageResponse(BaseModel):
-    id: UUID
-    ticket_id: UUID
-    author_id: Optional[UUID]
-    message: str
-    is_internal: bool
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {"from_attributes": True}
-
-
 class TicketListResponse(BaseModel):
     total: int
     items: list[TicketResponse]
