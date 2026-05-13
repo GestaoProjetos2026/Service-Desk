@@ -32,7 +32,6 @@ class TicketUpdate(BaseModel):
 
 
 class TicketMessageCreate(BaseModel):
-    ticket_id: UUID
     author_id: Optional[UUID] = None
     message: str = Field(min_length=1)
     is_internal: bool = False
@@ -73,3 +72,8 @@ class TicketMessageResponse(BaseModel):
 class TicketListResponse(BaseModel):
     total: int
     items: list[TicketResponse]
+
+
+class TicketMessageListResponse(BaseModel):
+    total: int
+    items: list[TicketMessageResponse]

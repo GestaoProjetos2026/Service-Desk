@@ -1,6 +1,5 @@
 """
-Gerador de Relatório de Testes — Mensagens do Ticket
-Formato idêntico ao Relatorio_Testes_ServiceDesk.pdf
+Formato Relatorio_Testes_ServiceDesk.pdf
 """
 
 from fpdf import FPDF
@@ -36,13 +35,13 @@ class ReportPDF(FPDF):
     def body_text(self, text):
         self.set_font("Helvetica", "", 10)
         self.set_text_color(40, 40, 40)
-        self.multi_cell(0, 6, text)
+        self.multi_cell(0, 6, text, new_x="LMARGIN", new_y="NEXT")
         self.ln(2)
 
     def bold_text(self, text):
         self.set_font("Helvetica", "B", 10)
         self.set_text_color(40, 40, 40)
-        self.multi_cell(0, 6, text)
+        self.multi_cell(0, 6, text, new_x="LMARGIN", new_y="NEXT")
 
     def code_block(self, code):
         self.set_font("Courier", "", 9)
@@ -89,7 +88,7 @@ class ReportPDF(FPDF):
             self.set_text_color(231, 76, 60)
             badge = f"Resultado: [FALHA] {text}"
         self.set_font("Helvetica", "B", 10)
-        self.multi_cell(0, 6, badge)
+        self.multi_cell(0, 6, badge, new_x="LMARGIN", new_y="NEXT")
         self.set_text_color(40, 40, 40)
         self.ln(2)
 
