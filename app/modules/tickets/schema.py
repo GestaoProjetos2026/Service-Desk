@@ -31,6 +31,12 @@ class TicketUpdate(BaseModel):
     category: Optional[str] = Field(default=None, max_length=100)
 
 
+class TicketMessageCreate(BaseModel):
+    author_id: Optional[UUID] = None
+    message: str = Field(min_length=1)
+    is_internal: bool = False
+
+
 # ── Response Schemas ───────────────────────────────────────────────────────────
 
 class TicketResponse(BaseModel):
@@ -54,3 +60,8 @@ class TicketResponse(BaseModel):
 class TicketListResponse(BaseModel):
     total: int
     items: list[TicketResponse]
+
+
+class TicketMessageListResponse(BaseModel):
+    total: int
+    items: list[TicketMessageResponse]

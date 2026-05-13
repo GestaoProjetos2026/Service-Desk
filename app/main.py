@@ -6,7 +6,7 @@ from app.config.config import settings
 from app.config.database import get_session
 from app.modules.knowledge_base.routes import router as knowledge_base_router
 from app.modules.tickets.routes import router as tickets_router
-from app.modules.ticket_messages.routes import router as ticket_messages_router
+from app.modules.tickets.message_routes import router as messages_router
 
 
 print("[DEBUG] app.main loaded")
@@ -32,7 +32,7 @@ def create_app() -> FastAPI:
 
     app.include_router(knowledge_base_router)
     app.include_router(tickets_router)
-    app.include_router(ticket_messages_router)
+    app.include_router(messages_router)
 
     return app
 
