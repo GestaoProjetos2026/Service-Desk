@@ -28,6 +28,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          command_timeout: 30m
           script: |
             # Navigate to the appropriate environment folder on your Azure VPS
             mkdir -p /home/azureuser/service-desk/${{ env.ENV_NAME }}
